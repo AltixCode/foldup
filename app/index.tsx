@@ -6,6 +6,7 @@ import { Pressable, View } from 'react-native';
 import { BannerAdSlot } from '@/components/BannerAdSlot';
 import { Screen, Text } from '@/components/ui';
 import { t } from '@/i18n';
+import { gridMetrics } from '@/logic/gridLayout';
 import { FREE_LEVELS, TOTAL_LEVELS, isLevelUnlocked } from '@/logic/stars';
 import { useLevelsStore } from '@/store/useLevelsStore';
 import { usePremiumStore } from '@/store/usePremiumStore';
@@ -41,9 +42,7 @@ export default function Levels() {
    * re-centring it, which keeps the tiles aligned with the cards above them.
    */
   const [gridWidth, setGridWidth] = useState(0);
-  const columns = gridWidth > 0 ? Math.max(1, Math.floor((gridWidth + GRID_GAP) / (MIN_CELL + GRID_GAP))) : 0;
-  const cellSize =
-    columns > 0 ? (gridWidth - GRID_GAP * (columns - 1)) / columns : MIN_CELL;
+  const { cellSize } = gridMetrics(gridWidth, MIN_CELL, GRID_GAP);
 
   const next = Math.min(TOTAL_LEVELS, highest + 1);
 
