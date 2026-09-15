@@ -53,6 +53,7 @@ function RootNavigator() {
         }}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="level/[id]" options={{ title: '' }} />
         <Stack.Screen name="settings" options={{ title: t('settingsTitle') }} />
         <Stack.Screen
           name="paywall"
