@@ -79,7 +79,7 @@ Changing a bundle id means deleting and recreating the RevenueCat app, which
 | IAP id / product | `6812276823` / `com.altixcode.foldup.removeads` |
 
 All ten release identifiers plus `EXPO_TOKEN` are already GitHub repo secrets.
-Locally they come from `/Volumes/ExtremePro/Dev/.admob-ids/foldup.env` —
+Locally they come from `/Volumes/ExtremePro/Dev/mobile_expo_apps/.admob-ids/foldup.env` —
 never commit that file.
 
 ## Blocked on a person — cannot be scripted
