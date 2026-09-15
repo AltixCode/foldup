@@ -14,6 +14,7 @@ Portfolio rules: `Dev/AGENTS.md`, then `Dev/docs/agents/18-app-lifecycle.md`.
 | Stage | **Feature-complete**, not yet released |
 | Tests | 295 passing |
 | Device pass | ⬜ never run |
+| App Store | metadata, IAP, price, availability and privacy all done; needs screenshots and a build |
 | Released | ⬜ no |
 
 ## Verification state
@@ -73,6 +74,9 @@ Changing a bundle id means deleting and recreating the RevenueCat app, which
 | AdMob banner (iOS / Android) | `ca-app-pub-2504845459806550/9053381944` / `ca-app-pub-2504845459806550/7500627128` |
 | AdMob interstitial (iOS / Android) | `ca-app-pub-2504845459806550/8744416873` / `ca-app-pub-2504845459806550/7431335202` |
 | AdMob rewarded (iOS / Android) | `ca-app-pub-2504845459806550/1520532972` / `ca-app-pub-2504845459806550/1174891927` |
+| App Store app id | `6812275609` |
+| App Store name | Foldup Tile Merge |
+| IAP id / product | `6812276823` / `com.altixcode.foldup.removeads` |
 
 All ten release identifiers plus `EXPO_TOKEN` are already GitHub repo secrets.
 Locally they come from `/Volumes/ExtremePro/Dev/.admob-ids/foldup.env` —
@@ -83,11 +87,17 @@ never commit that file.
 These three have no write API at all. Browser sessions live in the Playwright
 MCP profile (`~/Library/Caches/ms-playwright-mcp/`).
 
-1. **App Store Connect record** — the session was expired on 2026-09-15 and
-   **needs a sign-in**. Then:
-   `asc iris apps create --name "Foldup" --bundle-id com.altixcode.foldup --sku foldup-ios`
-   The bundle id is already registered. Everything after the record — IAP,
-   pricing, localisations — is scriptable.
+1. **App Store Connect record — done.** App `6812275609` exists, with
+   the `remove_ads` non-consumable at $3.99 USA base, auto-equalized, plus a
+   free app price schedule and availability in every territory. The store name
+   is **Foldup Tile Merge**, which may differ from the in-app name: App
+   Store display names are globally unique and several short ones in this batch
+   were already taken.
+   Still console-only, and therefore still blocked on a person: the App Privacy
+   data-usage questionnaire, and `contentRightsDeclaration` — `PATCH /v1/apps`
+   answers 200 for the latter and stores nothing. Without both, adding the
+   version to a review submission fails `409 STATE_ERROR.ENTITY_STATE_INVALID`
+   while `versions check-readiness` still reports ready.
 2. **Play Console app.** A Play app has **no package name until its first bundle
    is uploaded**, so the order is: create app → upload an AAB to internal testing
    → *then* create the `remove_ads` product. Build that first AAB from a
