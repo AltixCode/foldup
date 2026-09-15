@@ -1,6 +1,6 @@
 import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
 
 import { BannerAdSlot } from '@/components/BannerAdSlot';
@@ -13,6 +13,9 @@ import { useTheme } from '@/theme';
 
 /** Enough to fill a few screens without generating four hundred tiles up front. */
 const VISIBLE = 60;
+/** Smallest comfortable tile; the real size is measured up from this. */
+const MIN_CELL = 56;
+const GRID_GAP = 8;
 
 export default function Levels() {
   const router = useRouter();
@@ -27,6 +30,20 @@ export default function Levels() {
   useEffect(() => {
     void hydrate();
   }, [hydrate]);
+
+  /**
+   * The grid is measured so its columns fill the width exactly.
+   *
+   * With a fixed 56pt cell and `flexWrap`, whatever the row could not use piled
+   * up on the right — the tiles sat left while every other element on the
+   * screen ran edge to edge, so the column looked broken rather than centred.
+   * Fitting the cell to the measured width removes the gutter instead of
+   * re-centring it, which keeps the tiles aligned with the cards above them.
+   */
+  const [gridWidth, setGridWidth] = useState(0);
+  const columns = gridWidth > 0 ? Math.max(1, Math.floor((gridWidth + GRID_GAP) / (MIN_CELL + GRID_GAP))) : 0;
+  const cellSize =
+    columns > 0 ? (gridWidth - GRID_GAP * (columns - 1)) / columns : MIN_CELL;
 
   const next = Math.min(TOTAL_LEVELS, highest + 1);
 
@@ -91,7 +108,10 @@ export default function Levels() {
           </Pressable>
         ) : null}
 
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.xl }}>
+        <View
+          onLayout={(e) => setGridWidth(e.nativeEvent.layout.width)}
+          style={{ flexDirection: 'row', flexWrap: 'wrap', gap: GRID_GAP, marginTop: spacing.xl }}
+        >
           {Array.from({ length: VISIBLE }, (_, i) => i + 1).map((level) => {
             const result = results[level];
             const unlocked = isLevelUnlocked(level, highest, isPremium);
@@ -107,8 +127,8 @@ export default function Levels() {
                 accessibilityState={{ disabled: !unlocked }}
                 onPress={() => (unlocked ? router.push(`/level/${level}`) : router.push('/paywall'))}
                 style={{
-                  width: 56,
-                  height: 56,
+                  width: cellSize,
+                  height: cellSize,
                   alignItems: 'center',
                   justifyContent: 'center',
                   borderRadius: radius.md,
