@@ -1,3 +1,4 @@
+import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import { Pressable, View } from 'react-native';
@@ -114,10 +115,15 @@ export default function Levels() {
                   backgroundColor: result ? colors.surface : colors.surfaceAlt,
                   borderWidth: result ? 1 : 0,
                   borderColor: colors.accent,
-                  opacity: unlocked ? 1 : 0.4,
                 }}
               >
+                {/* The number stays at full contrast whether or not the level is
+                    locked. It was previously dimmed to 0.4 over a dark surface,
+                    which is unreadable, and the dimming was the ONLY visible
+                    marker of the locked state — so a lock icon carries it now,
+                    alongside the accessibility label. */}
                 <Text variant="callout">{String(level)}</Text>
+                {unlocked ? null : <Feather name="lock" size={11} color={colors.textMuted} />}
                 {result ? (
                   <Text variant="micro" tone="accent">
                     {'★'.repeat(result.stars)}
