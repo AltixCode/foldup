@@ -30,7 +30,11 @@ export function TileBoard({
   const rows = board.length;
   const cols = board[0]?.length ?? 0;
   const gap = spacing.sm;
-  const available = Math.min(width - spacing.base * 2, height * 0.5);
+  // Sized from the space there is. A flat cap set against a small phone leaves
+  // the board in the top third of a 6.9" screen with the rest empty, and a 13"
+  // iPad worse — which reads as an app nobody has opened on a modern device.
+  const cap = width >= 700 ? 690 : 552;
+  const available = Math.min(width - spacing.base * 2, height * 0.58, cap);
   const side = Math.floor((available - gap * (cols - 1)) / cols);
 
   const targets = lifted ? legalTargets(board, lifted) : [];
