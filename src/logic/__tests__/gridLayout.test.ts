@@ -74,3 +74,34 @@ describe("gridMetrics", () => {
     }
   });
 });
+
+describe('a row never overflows the width it was measured against', () => {
+  /*
+   * The cell is sized so a row spans the width *exactly*, which is right in
+   * real arithmetic and occasionally wrong in floating point: the sum can land
+   * an ulp above `width`. Flexbox does not round in our favour there -- it
+   * wraps a cell onto the next line, and the row is left a whole cell plus a
+   * gap short of the right edge.
+   *
+   * That is the gutter the user reported, reappearing for a second reason
+   * after the first was fixed. It shows on 2.3% of widths in the 200-600pt
+   * range, which is why it survives a look on one device.
+   */
+  it.each([216.02, 216.03, 216.04, 216.21, 216.22, 216.23])(
+    'width %p',
+    (width) => {
+      const { columns, cellSize } = gridMetrics(width, 56, 12);
+      const span = columns * cellSize + 12 * (columns - 1);
+      expect(span).toBeLessThanOrEqual(width);
+    },
+  );
+
+  it('leaves at most a hair of the width unused', () => {
+    for (let w = 200; w <= 600; w += 0.01) {
+      const { columns, cellSize } = gridMetrics(w, 56, 12);
+      const span = columns * cellSize + 12 * (columns - 1);
+      expect(span).toBeLessThanOrEqual(w);
+      expect(w - span).toBeLessThan(1);
+    }
+  });
+});
