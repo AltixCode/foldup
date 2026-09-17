@@ -7,7 +7,7 @@ import { BannerAdSlot } from '@/components/BannerAdSlot';
 import { Screen, Text } from '@/components/ui';
 import { t } from '@/i18n';
 import { gridMetrics } from '@/logic/gridLayout';
-import { FREE_LEVELS, TOTAL_LEVELS, isLevelUnlocked } from '@/logic/stars';
+import { FREE_LEVELS, TOTAL_LEVELS, lockReason } from '@/logic/stars';
 import { useLevelsStore } from '@/store/useLevelsStore';
 import { usePremiumStore } from '@/store/usePremiumStore';
 import { useTheme } from '@/theme';
@@ -113,7 +113,11 @@ export default function Levels() {
         >
           {Array.from({ length: VISIBLE }, (_, i) => i + 1).map((level) => {
             const result = results[level];
-            const unlocked = isLevelUnlocked(level, highest, isPremium);
+            // Three states, not two. A level the player has not reached yet
+            // is not for sale, and must not offer to sell itself: the banner
+            // above this grid promises the first 30 are free.
+            const reason = lockReason(level, highest, isPremium);
+            const unlocked = reason === 'open';
             return (
               <Pressable
                 key={level}
@@ -124,7 +128,10 @@ export default function Levels() {
                     : t('levelLabel', { number: level })
                 }
                 accessibilityState={{ disabled: !unlocked }}
-                onPress={() => (unlocked ? router.push(`/level/${level}`) : router.push('/paywall'))}
+                disabled={reason === 'progress'}
+                onPress={() =>
+                  unlocked ? router.push(`/level/${level}`) : router.push('/paywall')
+                }
                 style={{
                   width: cellSize,
                   height: cellSize,
@@ -142,7 +149,12 @@ export default function Levels() {
                     marker of the locked state — so a lock icon carries it now,
                     alongside the accessibility label. */}
                 <Text variant="callout">{String(level)}</Text>
-                {unlocked ? null : <Feather name="lock" size={11} color={colors.textMuted} />}
+                {/* The padlock means "buy this", so only a premium-locked
+                    level wears one. A level simply not reached yet reads as
+                    inactive, which is what it is. */}
+                {reason === 'premium' ? (
+                  <Feather name="lock" size={11} color={colors.textMuted} />
+                ) : null}
                 {result ? (
                   <Text variant="micro" tone="accent">
                     {'★'.repeat(result.stars)}

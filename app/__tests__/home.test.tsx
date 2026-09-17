@@ -48,10 +48,28 @@ describe('Levels', () => {
     expect(testRouter.push).toHaveBeenCalledWith('/level/1');
   });
 
-  it('sends a free player to the paywall for a locked level', async () => {
+  // Rewritten. It used to press a level past the free run on a FRESH install and assert the
+  // paywall opened, which passed for the wrong reason: every shut level sold,
+  // including the 49 that the banner directly above the grid promises are
+  // free. The contract is that only a level shut BY THE PURCHASE sells.
+  it('sends a free player to the paywall once the free run is spent', async () => {
+    const cleared = Object.fromEntries(
+      Array.from({ length: FREE_LEVELS }, (_, i) => [i + 1, { moves: 10, stars: 3 }]),
+    );
+    await seed(cleared);
     const { getByLabelText } = await renderWithProviders(<Levels />);
-    await fireEvent.press(getByLabelText(t('levelLabel', { number: 45 })));
+    await waitFor(() =>
+      expect(getByLabelText(t('levelLabel', { number: FREE_LEVELS + 1 }))).toBeTruthy(),
+    );
+    await fireEvent.press(getByLabelText(t('levelLabel', { number: FREE_LEVELS + 1 })));
     expect(testRouter.push).toHaveBeenCalledWith('/paywall');
+  });
+
+  it('does not sell a free level the player has simply not reached', async () => {
+    const { getByLabelText } = await renderWithProviders(<Levels />);
+    await fireEvent.press(getByLabelText(t('levelLabel', { number: 2 })));
+    expect(testRouter.push).not.toHaveBeenCalledWith('/paywall');
+    expect(testRouter.push).not.toHaveBeenCalledWith('/level/2');
   });
 
   it('tells a free player where the free run ends', async () => {
