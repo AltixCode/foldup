@@ -1,0 +1,35 @@
+{
+  "identifier": "C451AE7B-EF52-4C18-BDFF-A98302C53B95",
+  "nonRenewingSubscriptions": [],
+  "products": [
+    {
+      "displayPrice": "4.99",
+      "familyShareable": false,
+      "internalID": "78E1948C-170A-47E7-949A-0A59B68D2E80",
+      "localizations": [
+        {
+          "description": "foldup remove ads lifetime unlock",
+          "displayName": "foldup remove ads",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.altixcode.foldup.removeads",
+      "referenceName": "foldup remove ads",
+      "type": "NonConsumable"
+    }
+  ],
+  "settings": {
+    "_applicationInternalID": "",
+    "_developerTeamID": "",
+    "_failTransactionsEnabled": false,
+    "_lastSynchronizedDate": 0,
+    "_locale": "en_US",
+    "_storefront": "USA",
+    "_storeKitErrors": []
+  },
+  "subscriptionGroups": [],
+  "version": {
+    "major": 4,
+    "minor": 0
+  }
+}
