@@ -24,7 +24,8 @@ export interface Point {
   c: number;
 }
 
-export const samePoint = (a: Point, b: Point): boolean => a.r === b.r && a.c === b.c;
+export const samePoint = (a: Point, b: Point): boolean =>
+  a.r === b.r && a.c === b.c;
 
 export function tileAt(board: Board, at: Point): Cell {
   return board[at.r]?.[at.c] ?? null;
@@ -83,7 +84,12 @@ export interface MergeResult {
 export function applyMerge(board: Board, from: Point, to: Point): MergeResult {
   const source = tileAt(board, from);
   const target = tileAt(board, to);
-  if (!source || !target || source.value !== target.value || samePoint(from, to)) {
+  if (
+    !source ||
+    !target ||
+    source.value !== target.value ||
+    samePoint(from, to)
+  ) {
     return { board, gained: 0 };
   }
   const next = cloneBoard(board);
@@ -101,14 +107,64 @@ export function isCleared(board: Board): boolean {
 /** No legal merge anywhere — the player must undo or restart. */
 export function isStuck(board: Board): boolean {
   if (isCleared(board)) return false;
-  return occupied(board).every((from) => legalTargets(board, from).length === 0);
+  return occupied(board).every(
+    (from) => legalTargets(board, from).length === 0,
+  );
 }
 
 /** A canonical key: values by position. Ids are not part of a position. */
 export function boardKey(board: Board): string {
-  return board.map((row) => row.map((cell) => cell?.value ?? 0).join(',')).join('|');
+  return board
+    .map((row) => row.map((cell) => cell?.value ?? 0).join(","))
+    .join("|");
 }
 
 export function emptyBoard(rows: number, cols: number): Board {
-  return Array.from({ length: rows }, () => Array.from({ length: cols }, (): Cell => null));
+  return Array.from({ length: rows }, () =>
+    Array.from({ length: cols }, (): Cell => null),
+  );
+}
+
+/**
+ * Swipe-to-fold: a fling from a tile in one of the four directions is the same
+ * "lift, then drop on a neighbour" move the two-tap interaction makes, just
+ * expressed in one gesture instead of two taps.
+ */
+export type SwipeDirection = "up" | "down" | "left" | "right";
+
+const SWIPE_DELTAS: Record<SwipeDirection, Point> = {
+  up: { r: -1, c: 0 },
+  down: { r: 1, c: 0 },
+  left: { r: 0, c: -1 },
+  right: { r: 0, c: 1 },
+};
+
+/**
+ * The cell a swipe from `from` in `direction` points at. Not necessarily a
+ * legal fold target — callers still check that with `legalTargets`, exactly
+ * as the tap flow does.
+ */
+export function swipeTarget(from: Point, direction: SwipeDirection): Point {
+  const delta = SWIPE_DELTAS[direction];
+  return { r: from.r + delta.r, c: from.c + delta.c };
+}
+
+/**
+ * Which of the four directions a raw pan gesture points in, or `null` when the
+ * finger has not travelled far enough to mean anything — the same "tap that
+ * wandered" case the tap flow already tolerates via its own touch slop.
+ *
+ * Ties (an exactly diagonal drag) resolve to the horizontal axis; a real board
+ * swipe is rarely a perfect 45 degrees, so this only ever matters for a
+ * fabricated event, and picking one axis deterministically beats the gesture
+ * silently doing nothing.
+ */
+export function directionFromTranslation(
+  dx: number,
+  dy: number,
+  threshold: number,
+): SwipeDirection | null {
+  if (Math.abs(dx) < threshold && Math.abs(dy) < threshold) return null;
+  if (Math.abs(dx) >= Math.abs(dy)) return dx > 0 ? "right" : "left";
+  return dy > 0 ? "down" : "up";
 }

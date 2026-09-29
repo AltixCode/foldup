@@ -1,16 +1,16 @@
-import Feather from '@expo/vector-icons/Feather';
-import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { Pressable, View } from 'react-native';
+import Feather from "@expo/vector-icons/Feather";
+import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { Pressable, View } from "react-native";
 
-import { BannerAdSlot } from '@/components/BannerAdSlot';
-import { Screen, Text } from '@/components/ui';
-import { t } from '@/i18n';
-import { gridMetrics } from '@/logic/gridLayout';
-import { FREE_LEVELS, TOTAL_LEVELS, lockReason } from '@/logic/stars';
-import { useLevelsStore } from '@/store/useLevelsStore';
-import { usePremiumStore } from '@/store/usePremiumStore';
-import { useTheme } from '@/theme';
+import { BannerAdSlot } from "@/components/BannerAdSlot";
+import { Screen, Text } from "@/components/ui";
+import { t } from "@/i18n";
+import { gridMetrics } from "@/logic/gridLayout";
+import { FREE_LEVELS, TOTAL_LEVELS, lockReason } from "@/logic/stars";
+import { useLevelsStore } from "@/store/useLevelsStore";
+import { usePremiumStore } from "@/store/usePremiumStore";
+import { useTheme, withAlpha } from "@/theme";
 
 /** Enough to fill a few screens without generating four hundred tiles up front. */
 const VISIBLE = 60;
@@ -51,44 +51,48 @@ export default function Levels() {
       <Screen scroll topInset>
         <View
           style={{
-            flexDirection: 'row',
-            alignItems: 'flex-end',
-            justifyContent: 'space-between',
-            marginTop: spacing['2xl'],
+            flexDirection: "row",
+            alignItems: "flex-end",
+            justifyContent: "space-between",
+            marginTop: spacing["2xl"],
           }}
         >
-          <Text variant="display">{t('levelsTitle')}</Text>
+          <Text variant="display">{t("levelsTitle")}</Text>
           <Text variant="bodyStrong" tone="accent">
-            {t('starsLabel', { count: stars })}
+            {t("starsLabel", { count: stars })}
           </Text>
         </View>
 
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`${t('continueLevel')} — ${t('levelLabel', { number: next })}`}
+          accessibilityLabel={`${t("continueLevel")} — ${t("levelLabel", { number: next })}`}
           onPress={() => router.push(`/level/${next}`)}
           style={{
             marginTop: spacing.lg,
             minHeight: 64,
             paddingHorizontal: spacing.lg,
-            justifyContent: 'center',
+            justifyContent: "center",
             borderRadius: radius.lg,
             backgroundColor: colors.inverse,
           }}
         >
           <Text variant="bodyStrong" color={colors.onInverse}>
-            {highest === 0 ? t('play') : t('continueLevel')}
+            {highest === 0 ? t("play") : t("continueLevel")}
           </Text>
-          <Text variant="caption" color={colors.onInverse} style={{ opacity: 0.8 }}>
-            {t('levelLabel', { number: next })}
+          <Text
+            variant="caption"
+            color={colors.onInverse}
+            style={{ opacity: 0.8 }}
+          >
+            {t("levelLabel", { number: next })}
           </Text>
         </Pressable>
 
         {!isPremium ? (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={t('lockedTitle')}
-            onPress={() => router.push('/paywall')}
+            accessibilityLabel={t("lockedTitle")}
+            onPress={() => router.push("/paywall")}
             style={{
               marginTop: spacing.base,
               padding: spacing.base,
@@ -99,17 +103,22 @@ export default function Levels() {
             }}
           >
             <Text variant="callout" tone="accent">
-              {t('lockedTitle')}
+              {t("lockedTitle")}
             </Text>
             <Text variant="caption" tone="muted" style={{ marginTop: 2 }}>
-              {t('lockedBody', { count: FREE_LEVELS })}
+              {t("lockedBody", { count: FREE_LEVELS })}
             </Text>
           </Pressable>
         ) : null}
 
         <View
           onLayout={(e) => setGridWidth(e.nativeEvent.layout.width)}
-          style={{ flexDirection: 'row', flexWrap: 'wrap', gap: GRID_GAP, marginTop: spacing.xl }}
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: GRID_GAP,
+            marginTop: spacing.xl,
+          }}
         >
           {Array.from({ length: VISIBLE }, (_, i) => i + 1).map((level) => {
             const result = results[level];
@@ -117,29 +126,41 @@ export default function Levels() {
             // is not for sale, and must not offer to sell itself: the banner
             // above this grid promises the first 30 are free.
             const reason = lockReason(level, highest, isPremium);
-            const unlocked = reason === 'open';
+            const unlocked = reason === "open";
+            // The one level that is actually playable next, as opposed to a
+            // level shut because the player has not reached it yet — both
+            // used to render identically (`surfaceAlt`, no border, no badge),
+            // so "which one is the available level to play right now" had no
+            // visible answer until a player had already earned a star on it.
+            const isNext = level === next;
             return (
               <Pressable
                 key={level}
                 accessibilityRole="button"
                 accessibilityLabel={
                   result
-                    ? `${t('levelLabel', { number: level })}, ${t('starsLabel', { count: result.stars })}`
-                    : t('levelLabel', { number: level })
+                    ? `${t("levelLabel", { number: level })}, ${t("starsLabel", { count: result.stars })}`
+                    : t("levelLabel", { number: level })
                 }
-                accessibilityState={{ disabled: !unlocked }}
-                disabled={reason === 'progress'}
+                accessibilityState={{ disabled: !unlocked, selected: isNext }}
+                disabled={reason === "progress"}
                 onPress={() =>
-                  unlocked ? router.push(`/level/${level}`) : router.push('/paywall')
+                  unlocked
+                    ? router.push(`/level/${level}`)
+                    : router.push("/paywall")
                 }
                 style={{
                   width: cellSize,
                   height: cellSize,
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  alignItems: "center",
+                  justifyContent: "center",
                   borderRadius: radius.md,
-                  backgroundColor: result ? colors.surface : colors.surfaceAlt,
-                  borderWidth: result ? 1 : 0,
+                  backgroundColor: isNext
+                    ? withAlpha(colors.accent, 0.16)
+                    : result
+                      ? colors.surface
+                      : colors.surfaceAlt,
+                  borderWidth: isNext ? 2 : result ? 1 : 0,
                   borderColor: colors.accent,
                 }}
               >
@@ -152,12 +173,12 @@ export default function Levels() {
                 {/* The padlock means "buy this", so only a premium-locked
                     level wears one. A level simply not reached yet reads as
                     inactive, which is what it is. */}
-                {reason === 'premium' ? (
+                {reason === "premium" ? (
                   <Feather name="lock" size={11} color={colors.textMuted} />
                 ) : null}
                 {result ? (
                   <Text variant="micro" tone="accent">
-                    {'★'.repeat(result.stars)}
+                    {"★".repeat(result.stars)}
                   </Text>
                 ) : null}
               </Pressable>
@@ -167,18 +188,18 @@ export default function Levels() {
 
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={t('settingsTitle')}
-          onPress={() => router.push('/settings')}
+          accessibilityLabel={t("settingsTitle")}
+          onPress={() => router.push("/settings")}
           style={{
             marginTop: spacing.xl,
             minHeight: 48,
-            alignItems: 'center',
-            justifyContent: 'center',
+            alignItems: "center",
+            justifyContent: "center",
             borderRadius: radius.md,
             backgroundColor: colors.surfaceAlt,
           }}
         >
-          <Text variant="callout">{t('settingsTitle')}</Text>
+          <Text variant="callout">{t("settingsTitle")}</Text>
         </Pressable>
       </Screen>
       <BannerAdSlot />
