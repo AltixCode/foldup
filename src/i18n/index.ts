@@ -98,7 +98,7 @@ export const translations = {
     tileA11y: 'Row {row}, column {col}, {value}',
     tileEmpty: 'empty',
     tileSelected: 'lifted',
-    tapToFold: 'Tap a tile, then its twin',
+    howToFold: 'Swipe a tile onto its twin — or tap it, then tap its twin',
   },
   es: {
     appName: 'Foldup',
@@ -176,7 +176,7 @@ export const translations = {
     tileA11y: 'Fila {row}, columna {col}, {value}',
     tileEmpty: 'vacía',
     tileSelected: 'levantada',
-    tapToFold: 'Toca una ficha y luego su gemela',
+    howToFold: 'Desliza una ficha hacia su gemela, o tócala y luego toca su gemela',
   },
   fr: {
     appName: 'Foldup',
@@ -254,7 +254,7 @@ export const translations = {
     tileA11y: 'Ligne {row}, colonne {col}, {value}',
     tileEmpty: 'vide',
     tileSelected: 'soulevée',
-    tapToFold: 'Touchez une tuile, puis sa jumelle',
+    howToFold: 'Faites glisser une tuile vers sa jumelle, ou touchez-la puis touchez sa jumelle',
   },
   de: {
     appName: 'Foldup',
@@ -332,7 +332,7 @@ export const translations = {
     tileA11y: 'Zeile {row}, Spalte {col}, {value}',
     tileEmpty: 'leer',
     tileSelected: 'angehoben',
-    tapToFold: 'Tippen Sie auf ein Feld, dann auf sein Zwillingsfeld',
+    howToFold: 'Wischen Sie ein Feld zu seinem Zwilling, oder tippen Sie es an und dann seinen Zwilling',
   },
   ru: {
     appName: 'Foldup',
@@ -410,7 +410,7 @@ export const translations = {
     tileA11y: 'Ряд {row}, столбец {col}, {value}',
     tileEmpty: 'пусто',
     tileSelected: 'поднята',
-    tapToFold: 'Коснитесь плитки, затем её пары',
+    howToFold: 'Проведите плитку к её паре — или коснитесь её, а затем коснитесь пары',
   },
   zh: {
     appName: 'Foldup',
@@ -488,7 +488,7 @@ export const translations = {
     tileA11y: '第 {row} 行第 {col} 列，{value}',
     tileEmpty: '空',
     tileSelected: '已拿起',
-    tapToFold: '点选一块，再点它的同伴',
+    howToFold: '将一块滑向它的同伴，或先点选它，再点选它的同伴',
   },
   ja: {
     appName: 'Foldup',
@@ -566,7 +566,7 @@ export const translations = {
     tileA11y: '{row}行{col}列、{value}',
     tileEmpty: '空',
     tileSelected: '持ち上げ中',
-    tapToFold: 'タイルをタップして、同じ数字をタップ',
+    howToFold: 'タイルをスワイプして同じ数字に重ねるか、タップしてから同じ数字をタップ',
   },
   pt: {
     appName: 'Foldup',
@@ -644,7 +644,7 @@ export const translations = {
     tileA11y: 'Linha {row}, coluna {col}, {value}',
     tileEmpty: 'vazia',
     tileSelected: 'levantada',
-    tapToFold: 'Toque numa peça e depois na gémea',
+    howToFold: 'Deslize uma peça até à sua gémea, ou toque nela e depois na gémea',
   },
   ko: {
     appName: 'Foldup',
@@ -722,7 +722,7 @@ export const translations = {
     tileA11y: '{row}행 {col}열, {value}',
     tileEmpty: '빈 칸',
     tileSelected: '들어올림',
-    tapToFold: '타일을 누르고 같은 숫자를 누르세요',
+    howToFold: '타일을 스와이프해서 같은 숫자 위로 옮기거나, 누른 뒤 같은 숫자를 누르세요',
   },
   it: {
     appName: 'Foldup',
@@ -800,7 +800,7 @@ export const translations = {
     tileA11y: 'Riga {row}, colonna {col}, {value}',
     tileEmpty: 'vuota',
     tileSelected: 'sollevata',
-    tapToFold: 'Tocca una tessera, poi la sua gemella',
+    howToFold: 'Fai scorrere una tessera sulla sua gemella, oppure toccala e poi tocca la gemella',
   },
   tr: {
     appName: 'Foldup',
@@ -878,7 +878,7 @@ export const translations = {
     tileA11y: 'Satır {row}, sütun {col}, {value}',
     tileEmpty: 'boş',
     tileSelected: 'kaldırıldı',
-    tapToFold: 'Bir kareye, sonra eşine dokunun',
+    howToFold: 'Bir kareyi eşinin üzerine kaydırın, ya da dokunun ve ardından eşine dokunun',
   },
   ar: {
     appName: 'Foldup',
@@ -956,7 +956,7 @@ export const translations = {
     tileA11y: 'الصف {row}، العمود {col}، {value}',
     tileEmpty: 'فارغة',
     tileSelected: 'مرفوعة',
-    tapToFold: 'المس بلاطة ثم توأمها',
+    howToFold: 'اسحب بلاطة نحو توأمها، أو المسها ثم المس توأمها',
   },
   fa: {
     appName: 'Foldup',
@@ -1034,7 +1034,7 @@ export const translations = {
     tileA11y: 'سطر {row}، ستون {col}، {value}',
     tileEmpty: 'خالی',
     tileSelected: 'برداشته‌شده',
-    tapToFold: 'یک کاشی را لمس کنید، سپس همتایش را',
+    howToFold: 'یک کاشی را به‌سوی همتایش بکشید، یا آن را لمس کنید و سپس همتایش را لمس کنید',
   },
   el: {
     appName: 'Foldup',
@@ -1112,7 +1112,7 @@ export const translations = {
     tileA11y: 'Γραμμή {row}, στήλη {col}, {value}',
     tileEmpty: 'κενό',
     tileSelected: 'σηκωμένο',
-    tapToFold: 'Πατήστε ένα πλακίδιο, μετά το δίδυμό του',
+    howToFold: 'Σύρετε ένα πλακίδιο πάνω στο δίδυμό του, ή πατήστε το και μετά πατήστε το δίδυμό του',
   },
 } as const;
 

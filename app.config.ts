@@ -161,7 +161,7 @@ const config: ExpoConfig = {
     // com.amazon.device:amazon-appstore-sdk), which made R8 emit thousands of
     // warnings during release minification and crash minifyReleaseWithR8 with
     // OutOfMemoryError: Metaspace -- see the plugin file for the full trace.
-    './plugins/withExcludeAmazonAppstore',
+    "./plugins/withExcludeAmazonAppstore",
 
     "expo-router",
     // iOS 26+ refuses to launch apps that have not adopted the UIScene lifecycle, which
@@ -186,6 +186,18 @@ const config: ExpoConfig = {
       },
     ],
     ["expo-tracking-transparency", { userTrackingPermission: TRACKING_USAGE }],
+    [
+      "expo-audio",
+      {
+        // Playback-only sound effects -- no recording anywhere in this app, so
+        // none of expo-audio's mic permissions or background-audio entitlements
+        // apply. Declaring them anyway would be an unused permission a store
+        // review can flag and a real privacy question this app has no answer to.
+        microphonePermission: false,
+        recordAudioAndroid: false,
+        enableBackgroundPlayback: false,
+      },
+    ],
     [
       "expo-build-properties",
       {

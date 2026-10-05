@@ -10,7 +10,7 @@ import { gridMetrics } from "@/logic/gridLayout";
 import { FREE_LEVELS, TOTAL_LEVELS, lockReason } from "@/logic/stars";
 import { useLevelsStore } from "@/store/useLevelsStore";
 import { usePremiumStore } from "@/store/usePremiumStore";
-import { useTheme } from "@/theme";
+import { useTheme, withAlpha } from "@/theme";
 
 /** Enough to fill a few screens without generating four hundred tiles up front. */
 const VISIBLE = 60;
@@ -127,6 +127,12 @@ export default function Levels() {
             // above this grid promises the first 30 are free.
             const reason = lockReason(level, highest, isPremium);
             const unlocked = reason === "open";
+            // The one level that is actually playable next, as opposed to a
+            // level shut because the player has not reached it yet — both
+            // used to render identically (`surfaceAlt`, no border, no badge),
+            // so "which one is the available level to play right now" had no
+            // visible answer until a player had already earned a star on it.
+            const isNext = level === next;
             return (
               <Pressable
                 key={level}
@@ -136,7 +142,10 @@ export default function Levels() {
                     ? `${t("levelLabel", { number: level })}, ${t("starsLabel", { count: result.stars })}`
                     : t("levelLabel", { number: level })
                 }
-                accessibilityState={{ disabled: reason === "progress" }}
+                accessibilityState={{
+                  disabled: reason === "progress",
+                  selected: isNext,
+                }}
                 disabled={reason === "progress"}
                 onPress={() =>
                   unlocked
@@ -149,8 +158,12 @@ export default function Levels() {
                   alignItems: "center",
                   justifyContent: "center",
                   borderRadius: radius.md,
-                  backgroundColor: result ? colors.surface : colors.surfaceAlt,
-                  borderWidth: result ? 1 : 0,
+                  backgroundColor: isNext
+                    ? withAlpha(colors.accent, 0.16)
+                    : result
+                      ? colors.surface
+                      : colors.surfaceAlt,
+                  borderWidth: isNext ? 2 : result ? 1 : 0,
                   borderColor: colors.accent,
                 }}
               >
